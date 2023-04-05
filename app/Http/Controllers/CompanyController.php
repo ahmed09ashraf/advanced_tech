@@ -27,26 +27,13 @@ class CompanyController extends Controller
 
     public function store(StoreCompanyRequest $request)
     {
-        if ($request->file('image')) {
-             $imagePath = $request->file('logo')->store('public/images');
-            Company::create([
-                'name' =>  $request['name'],
-                'email' =>  $request['email'],
-                'website' => $request['website'],
-                'logo' => str_replace('public', 'storage', $imagePath)
-            ]);
-        } else {
-            company::create([
-                'name' =>  $request['name'],
-                'email' =>  $request['email'],
-                'website' => $request['website'],
-                'logo' => $request['logo'],
-
-
-            ]);
-        }
-
+           $requestData =$request->all() ;
+        $filename=time().$request->file('logo')->getClientOriginalName() ;
+        $path = $request ->file('logo')->storeAs('images' , $filename , 'public');
+        $requestData['logo'] ='/storage/'.$path ;
+        Company::create($requestData);
         return to_route('companies.index');
+
     }
 
 
